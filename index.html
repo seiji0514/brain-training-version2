@@ -1,0 +1,37 @@
+            const q = shuffled[current];
+            // カテゴリーラベルを決定
+            let categoryLabel = '';
+            if (q.type === 'ひらがな→カタカナ') {
+                categoryLabel = 'ひらがな用';
+            } else if (q.type === 'カタカナ→ひらがな') {
+                categoryLabel = 'カタカナ用';
+            } else if (q.type === '漢字→読み') {
+                categoryLabel = '漢字用';
+        } else {
+                categoryLabel = q.type;
+            }
+            // 選択肢を生成
+            let choices = [q.a];
+            while (choices.length < 4) {
+                const randomProblem = problems[Math.floor(Math.random() * problems.length)];
+                if (!choices.includes(randomProblem.a)) {
+                    choices.push(randomProblem.a);
+                }
+            }
+            // 選択肢をシャッフル
+            choices = choices.sort(() => Math.random() - 0.5);
+
+            modalContent.innerHTML = `
+                <span class="close" onclick="closeWordGameModal()">&times;</span>
+                <h2>文字ゲーム (${current+1} / ${shuffled.length})</h2>
+                <div style="font-size:2em;margin:20px 0;">${q.q}</div>
+                <div class="buttons" style="grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 600px; margin: 20px auto;">
+                    ${choices.map((choice, index) => `
+                        <button onclick="window.checkAnswer('${choice}', '${q.a}')" 
+                                style="font-size:1.5em; padding: 15px;">
+                            ${choice}
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="message" id="wordMessage"></div>
+            `;
