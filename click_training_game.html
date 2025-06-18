@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>指先運動・クリック練習ゲーム</title>
+  <style>
+    body { background: #eef1f5; font-family: 'Segoe UI', 'Meiryo', sans-serif; margin: 0; }
+    .container { max-width: 480px; margin: 40px auto; background: #fff; border-radius: 18px; box-shadow: 0 2px 12px #dbe6f3; padding: 2em; text-align: center; }
+    .title { font-size: 1.5em; color: #2574c7; font-weight: bold; margin-bottom: 0.5em; }
+    .desc { color: #555; margin-bottom: 1.5em; }
+    .game-area { position: relative; width: 320px; height: 320px; margin: 0 auto 1.5em auto; background: #f5f6fa; border-radius: 12px; border: 1.5px solid #b0c4de; }
+    .target {
+      position: absolute;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.2s, width 0.2s, height 0.2s;
+      box-shadow: 0 2px 8px #b0c4de;
+      border: 2px solid #fff;
+    }
+    .score { color: #27ae60; font-weight: bold; margin-top: 1.5em; font-size: 1.2em; }
+    .timer { color: #e67e22; font-weight: bold; font-size: 1.2em; margin-bottom: 1em; }
+    .btn { background: #2574c7; color: #fff; border: none; border-radius: 6px; padding: 0.7em 1.5em; font-size: 1.1em; cursor: pointer; margin-top: 1em; }
+    .btn:hover { background: #1a5ca8; }
+    .result { font-size: 1.2em; margin-top: 1.5em; color: #2574c7; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">指先運動・クリック練習ゲーム</div>
+    <div class="desc">30秒間でできるだけ多くターゲットをクリックしましょう！<br>ターゲットはランダムな場所・大きさ・色で出現します。</div>
+    <div style="margin-bottom: 1em;">
+      <button class="btn" id="modeBtn" style="background:#e67e22;">デモモード</button>
+      <span id="modeLabel" style="margin-left:8px;color:#e67e22;font-weight:bold;">通常モード</span>
+    </div>
+    <div class="timer" id="timer">30</div>
+    <div class="game-area" id="gameArea"></div>
+    <div class="score" id="score">クリック数：0</div>
+    <button class="btn" id="startBtn">スタート</button>
+    <div class="result" id="result" style="display:none;"></div>
+  </div>
+  <script>
+    const gameArea = document.getElementById('gameArea');
+    const timerElem = document.getElementById('timer');
+    const scoreElem = document.getElementById('score');
+    const resultElem = document.getElementById('result');
+    const startBtn = document.getElementById('startBtn');
+    const modeBtn = document.getElementById('modeBtn');
+    const modeLabel = document.getElementById('modeLabel');
+    let score = 0;
+    let timeLeft = 30;
+    let timerId = null;
+    let isPlaying = false;
+    let isDemo = false;
+
+    function randomColor() {
+      const colors = ['#e74c3c','#27ae60','#2980b9','#f1c40f','#8e44ad','#16a085','#e67e22'];
+      return colors[Math.floor(Math.random()*colors.length)];
+    }
+    function randomInt(min, max) {
+      return Math.floor(Math.random()*(max-min+1))+min;
+    }
+    function spawnTarget(demoAutoClick) {
+      gameArea.innerHTML = '';
+      const size = randomInt(36, 72);
+      const x = randomInt(0, 320-size);
+      const y = randomInt(0, 320-size);
+      const target = document.createElement('div');
+      target.className = 'target';
+      target.style.width = size+'px';
+      target.style.height = size+'px';
+      target.style.left = x+'px';
+      target.style.top = y+'px';
+      target.style.background = randomColor();
+      target.onclick = () => {
+        if (!isPlaying) return;
+        score++;
+        scoreElem.textContent = 'クリック数：'+score;
+        spawnTarget();
+      };
+      gameArea.appendChild(target);
+      if (demoAutoClick) {
+        setTimeout(()=>{
+          if(isPlaying) {
+            target.click();
+            setTimeout(endGame, 300); // 0.3秒後に即終了
+          }
+        }, 400); // 0.4秒後に自動クリック
+      }
+    }
+    function startGame() {
+      score = 0;
+      timeLeft = 30;
+      isPlaying = true;
+      scoreElem.textContent = 'クリック数：0';
+      resultElem.style.display = 'none';
+      startBtn.style.display = 'none';
+      timerElem.textContent = isDemo ? '1' : timeLeft;
+      if (isDemo) {
+        // デモモード: 1問だけ自動クリック
+        spawnTarget(true);
+      } else {
+        spawnTarget();
+        timerId = setInterval(()=>{
+          timeLeft--;
+          timerElem.textContent = timeLeft;
+          if(timeLeft<=0){
+            endGame();
+          }
+        },1000);
+      }
+    }
+    function endGame() {
+      isPlaying = false;
+      clearInterval(timerId);
+      gameArea.innerHTML = '';
+      if (isDemo) {
+        resultElem.textContent = `結果：${score}回クリックできました！`;
+      } else {
+        resultElem.textContent = `結果：${score}回クリックできました！`;
+      }
+      resultElem.style.display = 'block';
+      startBtn.style.display = '';
+    }
+    startBtn.onclick = startGame;
+    modeBtn.onclick = function() {
+      isDemo = !isDemo;
+      modeBtn.textContent = isDemo ? '通常モード' : 'デモモード';
+      modeBtn.style.background = isDemo ? '#27ae60' : '#e67e22';
+      modeLabel.textContent = isDemo ? 'デモモード' : '通常モード';
+      modeLabel.style.color = isDemo ? '#27ae60' : '#e67e22';
+      // UIリセット
+      timerElem.textContent = isDemo ? '1' : '30';
+      scoreElem.textContent = 'クリック数：0';
+      resultElem.style.display = 'none';
+      gameArea.innerHTML = '';
+      startBtn.style.display = '';
+    };
+  </script>
+</body>
+</html> 

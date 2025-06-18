@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>脳トレゲーム トップ　記憶編　</title>
+  <style>
+    body {
+      background: #eef1f5;
+      font-family: 'Segoe UI', 'Meiryo', sans-serif;
+      margin: 0;
+    }
+    .header-memory {
+      width: 100%;
+      margin-top: 2em;
+    }
+    .header-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      gap: 24px;
+    }
+    .header-title {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #3498db;
+      margin: 0;
+    }
+    .header-btns {
+      display: flex;
+      gap: 10px;
+    }
+    .header-btns button {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 0.7em 1.2em;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #c8e6c9;
+      transition: background 0.3s;
+    }
+    .header-btns button:last-child {
+      background: #e67e22;
+      box-shadow: 0 2px 8px #fbeee0;
+    }
+    .header-btns button:hover {
+      opacity: 0.85;
+    }
+    .header-underline {
+      border-bottom: 4px solid #e74c3c;
+      margin-top: 0.2em;
+      width: 100%;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2em;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2em 1em 3em 1em;
+    }
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px #dbe6f3;
+      padding: 2em 1.5em 1.5em 1.5em;
+      text-align: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+      cursor: pointer;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-decoration: none;
+      color: inherit;
+    }
+    .card:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 8px 24px #b0c4de;
+    }
+    .card-title {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #2574c7;
+      margin-bottom: 0.5em;
+    }
+    .card-desc {
+      color: #555;
+      font-size: 1.05em;
+      line-height: 1.5;
+    }
+    @media (max-width: 700px) {
+      .header-title { font-size: 1.3em; }
+      .card-grid { grid-template-columns: 1fr; }
+    }
+    .game-top, .result {
+      text-align: center;
+      margin: 2em auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #b0c4de;
+      padding: 2.5em 1.5em;
+      max-width: 420px;
+    }
+    .game-title {
+      font-size: 2em;
+      color: #2574c7;
+      margin-bottom: 0.5em;
+    }
+    .game-desc {
+      color: #444;
+      font-size: 1.1em;
+      margin-bottom: 1.2em;
+    }
+    .game-preview {
+      width: 90%;
+      max-width: 320px;
+      border-radius: 10px;
+      margin-bottom: 1.5em;
+      box-shadow: 0 2px 8px #dbe6f3;
+    }
+    .start-btn, .restart-btn, .back-btn {
+      display: inline-block;
+      margin: 0.7em 0.5em 0 0.5em;
+      padding: 0.9em 2em;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .start-btn { background: #27ae60; color: #fff; }
+    .restart-btn { background: #f39c12; color: #fff; }
+    .back-btn { background: #3498db; color: #fff; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div style="text-align:center; margin-top:2em;">
+    <h1 style="font-size:2.5em; font-weight:bold; color:#3498db; margin-bottom:0.5em;">脳トレゲーム　記憶編</h1>
+    <div style="margin-bottom:1.5em;">
+      <a href="index.html"><button style="background: #27ae60; color: white; border: none; padding: 0.7em 1.2em; border-radius: 8px; font-size: 1em; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px #c8e6c9; transition: background 0.3s;">脳トレゲームversion2へ</button></a>
+    </div>
+  </div>
+  <div class="card-grid">
+    <a href="./memory_game.html" class="card">
+      <div style="font-size:2.2em; margin-bottom:0.5em;">🧠</div>
+      <div class="card-title">記憶力ゲーム</div>
+      <div class="card-desc">表示された内容を覚えて答える<br>記憶力トレーニング</div>
+    </a>
+    <a href="./reaction_game.html" class="card">
+      <div style="font-size:2.2em; margin-bottom:0.5em;">⚡</div>
+      <div class="card-title">反応ゲーム</div>
+      <div class="card-desc">素早い反応で正解を選ぶ<br>反射神経トレーニング</div>
+    </a>
+    <a href="./letter_game.html" class="card">
+      <div style="font-size:2.2em; margin-bottom:0.5em;">🔤</div>
+      <div class="card-title">文字ゲーム</div>
+      <div class="card-desc">文字を使った脳トレゲーム</div>
+    </a>
+    <a href="./concentration_game.html" class="card">
+      <div style="font-size:2.2em; margin-bottom:0.5em;">🃏</div>
+      <div class="card-title">神経衰弱ゲーム</div>
+      <div class="card-desc">同じ絵柄を揃えて記憶力を鍛える</div>
+    </a>
+    <a href="./click_training_game.html" class="card">
+      <div style="font-size:2.2em; margin-bottom:0.5em;">🖱️</div>
+      <div class="card-title">指先運動・クリック練習ゲーム</div>
+      <div class="card-desc">クリック操作で指先の運動や反応速度を鍛える</div>
+    </a>
+    <a href="./number-order.html" class="card">
+      <div style="font-size:2.2em; margin-bottom:0.5em;">🔢</div>
+      <div class="card-title">数字順番探しゲーム</div>
+      <div class="card-desc">数字を正しい順番に並べるゲーム</div>
+    </a>
+    <a href="./date-quiz.html" class="card">
+      <div style="font-size:2.2em; margin-bottom:0.5em;">📅</div>
+      <div class="card-title">日付・曜日クイズ</div>
+      <div class="card-desc">日付や曜日に関するクイズで脳を活性化</div>
+    </a>
+    <a href="./daily_life_simulation.html" class="card">
+      <div style="font-size:2.2em; margin-bottom:0.5em;">🏠</div>
+      <div class="card-title">生活動作シミュレーション</div>
+      <div class="card-desc">日常生活の動作をシミュレーションで体験</div>
+    </a>
+    <a href="./life_wisdom_quiz.html" class="card">
+      <div style="font-size:2.2em; margin-bottom:0.5em;">💡</div>
+      <div class="card-title">生活の知恵クイズ</div>
+      <div class="card-desc">暮らしに役立つ知識をクイズで学ぶ</div>
+    </a>
+  </div>
+</body>
+</html> 
