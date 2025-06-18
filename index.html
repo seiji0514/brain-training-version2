@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>脳トレゲーム version2　生活面</title>
+    <style>
+        body {
+            background: #eef1f5;
+            font-family: 'Segoe UI', 'Meiryo', sans-serif;
+            margin: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 2em 1em 1em 1em;
+        }
+        .header-title {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #2574c7;
+            letter-spacing: 2px;
+            text-align: center;
+            flex: 0 1 auto;
+            margin: 0;
+        }
+        .menu-btn {
+            position: absolute;
+            right: 9em;
+            top: 1em;
+            background: #2574c7;
+            color: white;
+            border: none;
+            padding: 0.5em;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+        .menu-btn:hover {
+            background: #1a5ca8;
+            transform: translateY(-1px);
+        }
+        .menu-btn:active {
+            transform: translateY(1px);
+        }
+        .menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            transition: none;
+            z-index: 1000;
+            padding: 2em 1em;
+            overflow-y: auto;
+            display: none;
+        }
+        .menu.show {
+            right: 0;
+            display: block;
+        }
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1em;
+            padding-bottom: 1em;
+            border-bottom: 1px solid #eee;
+        }
+        .menu-title {
+            font-size: 1.2em;
+            color: #2574c7;
+            font-weight: bold;
+        }
+        .menu-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: #666;
+            cursor: pointer;
+            padding: 0.2em;
+            transition: color 0.3s;
+        }
+        .menu-close:hover {
+            color: #2574c7;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 1em;
+            color: #333;
+            text-decoration: none;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s;
+            gap: 0.5em;
+        }
+        .menu-item:hover {
+            background: #f5f6fa;
+            color: #2574c7;
+            transform: translateX(5px);
+        }
+        .menu-item::before {
+            font-size: 1.2em;
+        }
+        .menu-item[href="index.html"]::before { content: '🏠'; }
+        .menu-item[onclick*="showInstructions"]::before { content: '❓'; }
+        .menu-item[onclick*="showSettings"]::before { content: '⚙️'; }
+        .menu-item[onclick*="showProgress"]::before { content: '📊'; }
+        .menu-item[href="login.html"]::before { content: '🚪'; }
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 999;
+        }
+        .menu-overlay.show {
+            display: block;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2em;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2em 1em 3em 1em;
+        }
+        .card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px #dbe6f3;
+            padding: 2em 1em 1.5em 1em;
+            text-align: center;
+            transition: transform 0.15s, box-shadow 0.15s;
+            cursor: pointer;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-decoration: none;
+            color: inherit;
+            width: 320px;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 8px 24px #b0c4de;
+        }
+        .card-emoji {
+            font-size: 2.2em;
+            margin-bottom: 0.5em;
+        }
+        .card-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2574c7;
+            margin-bottom: 0.3em;
+        }
+        .card-desc {
+            color: #555;
+            font-size: 0.98em;
+        }
+        @media (max-width: 700px) {
+            .header-title { font-size: 1.3em; }
+            .card-grid { grid-template-columns: 1fr; }
+        }
+        .instructions-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+        .instructions-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2em;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .instructions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5em;
+            padding-bottom: 0.5em;
+            border-bottom: 2px solid #eee;
+        }
+        .instructions-title {
+            font-size: 1.5em;
+            color: #2574c7;
+            font-weight: bold;
+            margin: 0;
+        }
+        .instructions-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: #666;
+            cursor: pointer;
+            padding: 0.2em;
+            transition: color 0.3s;
+        }
+        .instructions-close:hover {
+            color: #2574c7;
+        }
+        .instructions-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .instructions-item {
+            margin-bottom: 1em;
+            padding: 0.5em;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+        .instructions-item:hover {
+            background: #f5f6fa;
+        }
+        .instructions-item strong {
+            color: #2574c7;
+            display: block;
+            margin-bottom: 0.3em;
+        }
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+        .settings-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2em;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5em;
+            padding-bottom: 0.5em;
+            border-bottom: 2px solid #eee;
+        }
+        .settings-title {
+            font-size: 1.5em;
+            color: #2574c7;
+            font-weight: bold;
+            margin: 0;
+        }
+        .settings-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: #666;
+            cursor: pointer;
+            padding: 0.2em;
+            transition: color 0.3s;
+        }
+        .settings-close:hover {
+            color: #2574c7;
+        }
+        .settings-group {
+            margin-bottom: 1.5em;
+        }
+        .settings-group-title {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 0.8em;
+            font-weight: bold;
+        }
+        .settings-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8em;
+            padding: 0.5em;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+        .settings-item:hover {
+            background: #f5f6fa;
+        }
+        .settings-item label {
+            flex: 1;
+            margin-left: 0.5em;
+            cursor: pointer;
+        }
+        .settings-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .settings-item input[type="range"] {
+            flex: 1;
+            margin: 0 1em;
+        }
+        .settings-value {
+            min-width: 40px;
+            text-align: right;
+            color: #666;
+        }
+        .contact-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+        .contact-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2em;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5em;
+            padding-bottom: 0.5em;
+            border-bottom: 2px solid #eee;
+        }
+        .contact-title {
+            font-size: 1.5em;
+            color: #2574c7;
+            font-weight: bold;
+            margin: 0;
+        }
+        .contact-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: #666;
+            cursor: pointer;
+            padding: 0.2em;
+            transition: color 0.3s;
+        }
+        .contact-close:hover {
+            color: #2574c7;
+        }
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5em;
+        }
+        .form-group label {
+            color: #333;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group textarea {
+            padding: 0.8em;
+            border: 2px solid #e0e7ef;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #2574c7;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 116, 199, 0.1);
+        }
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .contact-submit {
+            background: #2574c7;
+            color: white;
+            border: none;
+            padding: 1em;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1em;
+        }
+        .contact-submit:hover {
+            background: #1a5ca8;
+            transform: translateY(-1px);
+        }
+        .contact-submit:active {
+            transform: translateY(1px);
+        }
+        .summary-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px #e0e7ef;
+            padding: 0.1em 0.8em;
+            text-align: center;
+            font-size: 1em;
+            color: #2574c7;
+            min-width: 120px;
+            position: relative;
+        }
+        .summary-card span {
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+        .game-top, .result {
+            text-align: center;
+            margin: 2em auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px #b0c4de;
+            padding: 2.5em 1.5em;
+            max-width: 420px;
+        }
+        .game-title {
+            font-size: 2em;
+            color: #2574c7;
+            margin-bottom: 0.5em;
+        }
+        .game-desc {
+            color: #444;
+            font-size: 1.1em;
+            margin-bottom: 1.2em;
+        }
+        .game-preview {
+            width: 90%;
+            max-width: 320px;
+            border-radius: 10px;
+            margin-bottom: 1.5em;
+            box-shadow: 0 2px 8px #dbe6f3;
+        }
+        .start-btn, .restart-btn, .back-btn {
+            display: inline-block;
+            margin: 0.7em 0.5em 0 0.5em;
+            padding: 0.9em 2em;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .start-btn { background: #27ae60; color: #fff; }
+        .restart-btn { background: #f39c12; color: #fff; }
+        .back-btn { background: #3498db; color: #fff; text-decoration: none; }
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .game-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+        .game-description {
+            font-size: 1.2rem;
+            color: #666;
+            text-align: center;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            width: 80%;
+            max-width: 600px;
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .game-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+        .completion-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 80%;
+            max-width: 500px;
+        }
+        .completion-message h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        .completion-message p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+        .completion-message button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background 0.3s ease;
+        }
+        .completion-message button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="header-title">脳トレゲームversion2　生活面編</h1>
+        <a href="brain_training_game.html" target="_blank" rel="noopener">
+            <button style="background: #2574c7; color: white; border: none; padding: 0.7em 1.2em; border-radius: 8px; font-size: 1em; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px #c8e6c9; transition: background 0.3s; margin-left: 14px;">脳トレゲームへ</button>
+        </a>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+    <div class="menu" id="gameMenu">
+        <div class="menu-header">
+            <div class="menu-title">メニュー</div>
+            <button class="menu-close" onclick="toggleMenu()">×</button>
+        </div>
+        <a href="index.html" class="menu-item">ホーム</a>
+        <a href="#" class="menu-item" onclick="showSettings()">設定</a>
+        <a href="https://line.me/R/ti/p/@440cqgno" class="menu-item" target="_blank" rel="noopener">LINEで問い合わせる</a>
+        <a href="#" class="menu-item" onclick="logout(); return false;">ログアウト</a>
+    </div>
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    <div class="card-grid" id="gameGrid">
+        <a href="./memory_game.html" class="card">
+            <div class="card-emoji">🧠</div>
+            <div class="card-title">記憶力ゲーム</div>
+            <div class="card-desc">表示された内容を覚えて答える<br>記憶力トレーニング</div>
+        </a>
+        <a href="./reaction_game.html" class="card">
+            <div class="card-emoji">⚡</div>
+            <div class="card-title">反応ゲーム</div>
+            <div class="card-desc">素早い反応で正解を選ぶ<br>反射神経トレーニング</div>
+        </a>
+        <a href="./letter_game.html" class="card">
+            <div class="card-emoji">🔤</div>
+            <div class="card-title">文字ゲーム</div>
+            <div class="card-desc">文字を使った脳トレゲーム</div>
+        </a>
+        <a href="./concentration_game.html" class="card">
+            <div class="card-emoji">🃏</div>
+            <div class="card-title">神経衰弱ゲーム</div>
+            <div class="card-desc">同じ絵柄を揃えて記憶力を鍛える</div>
+        </a>
+        <a href="./jigsaw_puzzle_game.html" class="card">
+            <div class="card-emoji">🧩</div>
+            <div class="card-title">ジグソーパズルゲーム</div>
+            <div class="card-desc">ピースを組み合わせて完成させるパズル</div>
+        </a>
+        <a href="./number-order.html" class="card">
+            <div class="card-emoji">🔢</div>
+            <div class="card-title">数字順番探しゲーム</div>
+            <div class="card-desc">数字を正しい順番に並べるゲーム</div>
+        </a>
+        <a href="./date-quiz.html" class="card">
+            <div class="card-emoji">📅</div>
+            <div class="card-title">日付・曜日クイズ</div>
+            <div class="card-desc">日付や曜日に関するクイズで脳を活性化</div>
+        </a>
+        <a href="./shopping-simulation.html" class="card">
+            <div class="card-emoji">🛒</div>
+            <div class="card-title">買い物シミュレーション</div>
+            <div class="card-desc">買い物体験で計算力や判断力を鍛える</div>
+        </a>
+        <!-- 日替わりチャレンジカード -->
+        <div class="card" style="border:2px solid #27ae60; box-shadow:0 4px 16px #d4f5e9; cursor:pointer; display:inline-block; width:calc(50% - 1em); vertical-align:top;">
+            <div class="card-emoji" style="font-size:2.2em;">🌟</div>
+            <div class="card-title" style="color:#27ae60;">日替わりチャレンジ</div>
+            <div class="card-desc">毎日変わる特別なお題に挑戦しよう！<br><span id='challengeStatus' style='color:#f39c12; font-weight:bold;'></span></div>
+        </div>
+        <div class="card" style="border:2px solid #e67e22; box-shadow:0 4px 16px #fbeee0; cursor:pointer; display:inline-block; width:calc(50% - 1em); vertical-align:top; margin-left:1em;" onclick="window.location.href='eye_training_index.html'">
+            <div class="card-emoji" style="font-size:2.2em;">👁️</div>
+            <div class="card-title" style="color:#e67e22;">目の訓練</div>
+            <div class="card-desc">追視・周辺視野・動体視力・反応速度など<br>目のリハビリ・運転技能向け</div>
+        </div>
+    </div>
+    <!-- 日替わりチャレンジモーダル -->
+    <div id="challengeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:3000;">
+      <div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:2em; border-radius:14px; width:90%; max-width:400px; box-shadow:0 4px 20px rgba(0,0,0,0.2); text-align:center;">
+        <h2 style="color:#27ae60; margin-bottom:1em;">日替わりチャレンジ</h2>
+        <div id="challengeContent" style="font-size:1.1em; margin-bottom:1.5em;"></div>
+        <button onclick="completeChallenge()" style="background:#27ae60; color:white; border:none; padding:0.7em 1.5em; border-radius:8px; font-size:1em; font-weight:bold; cursor:pointer;">チャレンジ達成！</button>
+        <button onclick="closeChallengeModal()" style="background:#ccc; color:#333; border:none; padding:0.7em 1.5em; border-radius:8px; font-size:1em; font-weight:bold; cursor:pointer; margin-left:1em;">閉じる</button>
+      </div>
+    </div>
+    <!-- ご褒美モーダル -->
+    <div id="rewardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:3100;">
+      <div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:2em; border-radius:14px; width:90%; max-width:350px; box-shadow:0 4px 20px rgba(0,0,0,0.2); text-align:center;">
+        <h2 style="color:#f39c12; margin-bottom:1em;">ご褒美！</h2>
+        <div style="font-size:1.2em; margin-bottom:1.2em;">おめでとうございます！<br>本日のチャレンジを達成しました🎉</div>
+        <div style="font-size:2.5em;">🏅</div>
+        <button onclick="closeRewardModal()" style="background:#27ae60; color:white; border:none; padding:0.7em 1.5em; border-radius:8px; font-size:1em; font-weight:bold; cursor:pointer; margin-top:1.5em;">閉じる</button>
+      </div>
+    </div>
+    
+    <div class="instructions-modal" id="instructionsModal">
+        <div class="instructions-content">
+            <div class="instructions-header">
+                <h2 class="instructions-title">遊び方</h2>
+                <button class="instructions-close" onclick="closeInstructions()">×</button>
+            </div>
+            <ul class="instructions-list">
+                <li class="instructions-item">
+                    <strong>1. 言葉しりとり・連想ゲーム</strong>
+                    前の言葉の最後の文字から始まる言葉を入力します
+                </li>
+                
+                <li class="instructions-item">
+                    <strong>12. 遠隔操作</strong>
+                    リモートデスクトップやVPNを活用し、自宅からでも安全にサーバーやPCを管理・操作できる環境を整備しています。
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h2 class="settings-title">設定</h2>
+                <button class="settings-close" onclick="closeSettings()">×</button>
+            </div>
+            <div class="settings-group">
+                <div class="settings-group-title">ゲーム設定</div>
+                <div class="settings-item">
+                    <input type="checkbox" id="soundEnabled" checked>
+                    <label for="soundEnabled">効果音を鳴らす</label>
+                </div>
+                <div class="settings-item">
+                    <input type="checkbox" id="bgmEnabled" checked>
+                    <label for="bgmEnabled">BGMを再生する</label>
+                </div>
+            </div>
+            <div class="settings-group">
+                <div class="settings-group-title">難易度設定</div>
+                <div class="settings-item">
+                    <label for="difficulty">難易度</label>
+                    <input type="range" id="difficulty" min="1" max="3" value="2">
+                    <span class="settings-value">普通</span>
+                </div>
+            </div>
+            <div class="settings-group">
+                <div class="settings-group-title">表示設定</div>
+                <div class="settings-item">
+                    <input type="checkbox" id="fullscreenEnabled">
+                    <label for="fullscreenEnabled">全画面表示</label>
+                </div>
+                <div class="settings-item">
+                    <input type="checkbox" id="darkModeEnabled">
+                    <label for="darkModeEnabled">ダークモード</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="contact-modal" id="contactModal">
+        <div class="contact-content">
+            <div class="contact-header">
+                <h2 class="contact-title">お問い合わせ</h2>
+                <button class="contact-close" onclick="closeContact()">×</button>
+            </div>
+            <form id="contactForm" class="contact-form">
+                <div class="form-group">
+                    <label for="contactName">お名前</label>
+                    <input type="text" id="contactName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactEmail">メールアドレス</label>
+                    <input type="email" id="contactEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactSubject">件名</label>
+                    <input type="text" id="contactSubject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactMessage">お問い合わせ内容</label>
+                    <textarea id="contactMessage" name="message" required></textarea>
+                </div>
+                <button type="submit" class="contact-submit">送信</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // メニュー制御
+        function toggleMenu() {
+            const menu = document.getElementById('gameMenu');
+            const overlay = document.getElementById('menuOverlay');
+            const isOpen = menu.classList.contains('show');
+            
+            if (isOpen) {
+                menu.classList.remove('show');
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+            } else {
+                menu.classList.add('show');
+                overlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // ESCキーでメニューを閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('gameMenu');
+                if (menu.classList.contains('show')) {
+                    toggleMenu();
+                }
+            }
+        });
+
+        // 遊び方の説明
+        function showInstructions() {
+            const modal = document.getElementById('instructionsModal');
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeInstructions() {
+            const modal = document.getElementById('instructionsModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // ESCキーで遊び方を閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('instructionsModal');
+                if (modal.style.display === 'block') {
+                    closeInstructions();
+                }
+            }
+        });
+
+        // モーダル外クリックで閉じる
+        document.getElementById('instructionsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeInstructions();
+            }
+        });
+
+        // ゲームのリセット
+        function resetGame() {
+            if (confirm('ゲームの進行状況をリセットしますか？')) {
+                localStorage.clear();
+                alert('リセットが完了しました');
+            }
+        }
+
+        // ゲームリスト
+        function loadGamesFromLS() {
+            const data = localStorage.getItem("nouryokuGames");
+            return data ? JSON.parse(data) : null;
+        }
+        const defaultGames = [
+            { emoji: '💭', title: '言葉しりとり・連想ゲーム', desc: '言葉をつなげて、連想力を鍛えるゲーム', link: 'word_chain_game.html' },
+            { emoji: '😊', title: '表情読み取りクイズ', desc: '表情から感情を読み取るクイズ', link: 'face_expression_quiz.html' },
+            { emoji: '💬', title: '会話シミュレーション', desc: 'シチュエーションごとに適切な返答を選ぶゲーム', link: 'conversation_simulation.html' },
+            { emoji: '🚦', title: '信号ゲーム', desc: '信号の色に合わせて正しい行動を選ぶゲーム', link: 'traffic_signal_game.html' },
+            { emoji: '🛑', title: '交通ルールクイズ', desc: '標識や交通ルールに関するクイズ', link: 'traffic_rule_quiz.html' },
+            { emoji: '🙆', title: 'マナーゲーム', desc: '公共の場や日常生活のマナーを学ぶクイズ', link: 'manner_game.html' },
+            { emoji: '⚠️', title: '危険探しゲーム', desc: 'イラストやシーンから危険な箇所を探すゲーム', link: 'danger_spotting_game.html' },
+            { emoji: '🧯', title: '防災クイズ', desc: '災害時の正しい行動や知識を学ぶクイズ', link: 'disaster_prevention_quiz.html' },
+            { emoji: '🆘', title: 'トラブル対応シミュレーション', desc: '日常のトラブルに対する適切な対応を選ぶゲーム', link: 'trouble_response_simulation.html' },
+        ];
+        async function renderGames() {
+            const grid = document.getElementById('gameGrid');
+            grid.innerHTML = '';
+            // 日替わりチャレンジカード
+            grid.innerHTML += `
+                <div class="card" style="border:2px solid #27ae60; box-shadow:0 4px 16px #d4f5e9; cursor:pointer; display:inline-block; width:calc(50% - 1em); vertical-align:top;">
+                    <div class="card-emoji" style="font-size:2.2em;">🌟</div>
+                    <div class="card-title" style="color:#27ae60;">日替わりチャレンジ</div>
+                    <div class="card-desc">毎日変わる特別なお題に挑戦しよう！<br><span id='challengeStatus' style='color:#f39c12; font-weight:bold;'></span></div>
+                </div>
+                <div class="card" style="border:2px solid #e67e22; box-shadow:0 4px 16px #fbeee0; cursor:pointer; display:inline-block; width:calc(50% - 1em); vertical-align:top; margin-left:1em;" onclick="window.location.href='eye_training_index.html'">
+                    <div class="card-emoji" style="font-size:2.2em;">👁️</div>
+                    <div class="card-title" style="color:#e67e22;">目の訓練</div>
+                    <div class="card-desc">追視・周辺視野・動体視力・反応速度など<br>目のリハビリ・運転技能向け</div>
+                </div>
+            `;
+            // games.jsonをfetch
+            let games = [];
+            try {
+                const res = await fetch('games.json');
+                games = await res.json();
+            } catch(e) {
+                // fallback: 旧方式
+                games = loadGamesFromLS() || defaultGames;
+            }
+            // 表示/非表示設定
+            const displaySettings = JSON.parse(localStorage.getItem('gameDisplaySettings') || '{}');
+            games.filter(g => g.status === 'public').forEach(g => {
+                if (displaySettings[g.id] === false) return;
+                grid.innerHTML += `
+                    <div class="card" onclick="window.location.href='${g.link}'">
+                        <div class="card-emoji">${g.emoji || ''}</div>
+                        <div class="card-title">${g.title}</div>
+                        <div class="card-desc">${g.desc || ''}</div>
+                    </div>
+                `;
+            });
+        }
+        renderGames();
+
+        // 設定の表示
+        function showSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            toggleMenu(); // メニューを閉じる
+        }
+
+        function closeSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // 難易度の表示更新
+        document.getElementById('difficulty').addEventListener('input', function(e) {
+            const value = e.target.value;
+            const text = ['簡単', '普通', '難しい'][value - 1];
+            e.target.nextElementSibling.textContent = text;
+        });
+
+        // 設定の保存
+        function saveSettings() {
+            const settings = {
+                sound: document.getElementById('soundEnabled').checked,
+                bgm: document.getElementById('bgmEnabled').checked,
+                difficulty: document.getElementById('difficulty').value,
+                fullscreen: document.getElementById('fullscreenEnabled').checked,
+                darkMode: document.getElementById('darkModeEnabled').checked
+            };
+            localStorage.setItem('gameSettings', JSON.stringify(settings));
+        }
+
+        // 設定の読み込み
+        function loadSettings() {
+            const saved = localStorage.getItem('gameSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                document.getElementById('soundEnabled').checked = settings.sound;
+                document.getElementById('bgmEnabled').checked = settings.bgm;
+                document.getElementById('difficulty').value = settings.difficulty;
+                document.getElementById('fullscreenEnabled').checked = settings.fullscreen;
+                document.getElementById('darkModeEnabled').checked = settings.darkMode;
+                // 難易度の表示を更新
+                const difficultyText = ['簡単', '普通', '難しい'][settings.difficulty - 1];
+                document.querySelector('.settings-value').textContent = difficultyText;
+            }
+        }
+
+        // 設定変更時の保存
+        document.querySelectorAll('.settings-item input').forEach(input => {
+            input.addEventListener('change', saveSettings);
+        });
+
+        // 初期設定の読み込み
+        loadSettings();
+
+        // ESCキーで設定を閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('settingsModal');
+                if (modal.style.display === 'block') {
+                    closeSettings();
+                }
+            }
+        });
+
+        // モーダル外クリックで設定を閉じる
+        document.getElementById('settingsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSettings();
+            }
+        });
+
+        // お問い合わせの表示
+        function showContact() {
+            const modal = document.getElementById('contactModal');
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            toggleMenu(); // メニューを閉じる
+        }
+
+        function closeContact() {
+            const modal = document.getElementById('contactModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            // フォームをリセット
+            document.getElementById('contactForm').reset();
+        }
+
+        // お問い合わせフォームの送信
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('contactForm');
+            if(form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const data = new FormData(form);
+                    const response = await fetch('https://formspree.io/f/movwvloj', {
+                        method: 'POST',
+                        body: data,
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (response.ok) {
+                        form.style.display = 'none';
+                        setTimeout(() => {
+                            if(typeof closeContact === 'function') closeContact();
+                            form.reset();
+                            form.style.display = '';
+                        }, 3000);
+                    } else {
+                        alert('送信に失敗しました。時間をおいて再度お試しください。');
+                    }
+                });
+            }
+        });
+
+        // ESCキーでお問い合わせを閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('contactModal');
+                if (modal.style.display === 'block') {
+                    closeContact();
+                }
+            }
+        });
+
+        // モーダル外クリックでお問い合わせを閉じる
+        document.getElementById('contactModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeContact();
+            }
+        });
+
+        // 日替わりチャレンジカードを最上部に追加
+        function renderGames() {
+            const grid = document.getElementById('gameGrid');
+            grid.innerHTML = '';
+            // 日替わりチャレンジカード
+            grid.innerHTML += `
+                <div class="card" style="border:2px solid #27ae60; box-shadow:0 4px 16px #d4f5e9; cursor:pointer; display:inline-block; width:calc(50% - 1em); vertical-align:top;">
+                    <div class="card-emoji" style="font-size:2.2em;">🌟</div>
+                    <div class="card-title" style="color:#27ae60;">日替わりチャレンジ</div>
+                    <div class="card-desc">毎日変わる特別なお題に挑戦しよう！<br><span id='challengeStatus' style='color:#f39c12; font-weight:bold;'></span></div>
+                </div>
+                <div class="card" style="border:2px solid #e67e22; box-shadow:0 4px 16px #fbeee0; cursor:pointer; display:inline-block; width:calc(50% - 1em); vertical-align:top; margin-left:1em;" onclick="window.location.href='eye_training_index.html'">
+                    <div class="card-emoji" style="font-size:2.2em;">👁️</div>
+                    <div class="card-title" style="color:#e67e22;">目の訓練</div>
+                    <div class="card-desc">追視・周辺視野・動体視力・反応速度など<br>目のリハビリ・運転技能向け</div>
+                </div>
+            `;
+            let games = loadGamesFromLS();
+            if (!games) games = defaultGames;
+            games.forEach(g =>
+                grid.innerHTML += `
+                    <div class="card" onclick="${g.link ? `window.location.href='${g.link}'` : `alert('${g.title}（サンプル）')`}">
+                        <div class="card-emoji">${g.emoji || ''}</div>
+                        <div class="card-title">${g.title}</div>
+                        <div class="card-desc">${g.description || g.desc || ''}</div>
+                    </div>
+                `
+            );
+        }
+        // 日替わりチャレンジ内容生成
+        function getTodayChallenge() {
+            const challenges = [
+                '計算ゲームで3問連続正解しよう！',
+                '記憶力ゲームで2回連続クリアしよう！',
+                '反応ゲームで平均0.5秒以内を目指そう！',
+                'ジグソーパズルを完成させよう！',
+                '神経衰弱ゲームで全ペアを見つけよう！',
+                '文字ゲームで全問正解しよう！',
+                '好きなゲームを1つ遊んでみよう！'
+            ];
+            const today = new Date();
+            const idx = today.getFullYear() + today.getMonth() + today.getDate();
+            return challenges[idx % challenges.length];
+        }
+        // チャレンジモーダル表示
+        function showChallengeModal() {
+            document.getElementById('challengeContent').textContent = getTodayChallenge();
+            document.getElementById('challengeModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        function closeChallengeModal() {
+            document.getElementById('challengeModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        // チャレンジ達成
+        function completeChallenge() {
+            const today = new Date().toISOString().slice(0,10);
+            localStorage.setItem('challenge_' + today, 'done');
+            closeChallengeModal();
+            showRewardModal();
+            updateChallengeStatus();
+        }
+        // ご褒美モーダル
+        function showRewardModal() {
+            document.getElementById('rewardModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        function closeRewardModal() {
+            document.getElementById('rewardModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        // チャレンジ達成状況表示
+        function updateChallengeStatus() {
+            const today = new Date().toISOString().slice(0,10);
+            const status = localStorage.getItem('challenge_' + today);
+            document.getElementById('challengeStatus').textContent = status === 'done' ? '本日達成済み！' : '';
+        }
+        document.addEventListener('DOMContentLoaded', updateChallengeStatus);
+
+        // ローカルストレージのクリア
+        localStorage.removeItem("nouryokuGames");
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'brain-training-version2Login.html';
+        }
+
+        function showProgress() {
+            const userRole = localStorage.getItem('userRole');
+            if (userRole === 'admin') {
+                window.location.href = 'progress.html';
+            } else {
+                alert('この機能にアクセスする権限がありません。');
+            }
+        }
+    </script>
+</body>
+</html>
